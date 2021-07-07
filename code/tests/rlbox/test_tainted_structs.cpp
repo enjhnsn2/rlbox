@@ -54,6 +54,8 @@ TEST_CASE("Tainted struct pointer assignment", "[tainted_struct]")
   std::strncpy(fieldString.UNSAFE_unverified(), "Hello", strSize);
   const auto fieldBool = 1;
 
+  printf("Stage1\n");
+
   auto ps = sandbox.malloc_in_sandbox<testVarietyStruct>();
   ps->fieldLong = fieldLong;
   ps->fieldString = sandbox_reinterpret_cast<const char*>(fieldString);
@@ -62,16 +64,22 @@ TEST_CASE("Tainted struct pointer assignment", "[tainted_struct]")
   std::strncpy(temp, "Bye", sizeof(ps->fieldFixedArr));
   ps->voidPtr = nullptr;
 
+  printf("Stage2\n");
+
   REQUIRE(ps->fieldLong.UNSAFE_unverified() == fieldLong);
   REQUIRE(std::strcmp(ps->fieldString.UNSAFE_unverified(), "Hello") == 0);
   REQUIRE(ps->fieldBool.UNSAFE_unverified() == fieldBool);
   auto fixedArr = ps->fieldFixedArr.UNSAFE_unverified();
   REQUIRE(std::strcmp(&fixedArr[0], "Bye") == 0);
 
+  printf("Stage3\n");
+
   tainted<void*, TestSandbox> voidPtr = ps->voidPtr;
   REQUIRE(voidPtr == nullptr);
   REQUIRE(ps->voidPtr.UNSAFE_unverified() == nullptr);
   REQUIRE(voidPtr.UNSAFE_unverified() == nullptr);
+
+  printf("Stage4\n");
 
   sandbox.free_in_sandbox(ps->fieldString);
 
