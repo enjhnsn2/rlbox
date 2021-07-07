@@ -48,6 +48,8 @@ TEST_CASE("Tainted struct pointer assignment", "[tainted_struct]")
   rlbox::rlbox_sandbox<TestSandbox> sandbox;
   sandbox.create_sandbox();
 
+  printf("Stage0\n");
+
   const auto fieldLong = 7;
   const auto strSize = 10;
   auto fieldString = sandbox.malloc_in_sandbox<char>(strSize);
