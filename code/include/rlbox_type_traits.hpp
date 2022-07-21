@@ -536,6 +536,14 @@ namespace unsigned_int_of_size_t_detail {
   {
     using type = uint64_t;
   };
+
+  // temporary hack for cheri support
+  // since cheri has 16 byte pointers, but has 8 bytes of addresses
+  template<typename T>
+  struct unsigned_int_of_size_t_helper<T, std::enable_if_t<sizeof(T) == 16>>
+  {
+    using type = uint64_t;
+  };
 }
 
 template<typename T>
